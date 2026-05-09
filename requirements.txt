@@ -1,0 +1,23 @@
+# Top-level requirements — used by Streamlit (Phase 5.2) and FastAPI (Phase 5.1).
+# Azure Function has its own pinned set in azure_function/requirements.txt.
+
+# Core RAG
+pymongo>=4.6.0
+openai>=1.30.0
+python-dotenv>=1.0.0
+
+# Scraping (Phase 6)
+beautifulsoup4>=4.12.0
+curl-cffi>=0.6.0
+requests>=2.32.0
+
+# Streamlit web app (Phase 5.2)
+streamlit>=1.36.0
+
+# Entra ID auth (Phase 5.3)
+msal>=1.28.0
+
+# Teams API (Phase 5.1)
+fastapi>=0.111.0
+uvicorn[standard]>=0.30.0
+pydantic>=2.7.0
