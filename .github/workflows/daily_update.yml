@@ -1,0 +1,46 @@
+name: Daily KIB Website Update
+
+# Phase 6.1 — daily refresh of MongoDB with content scraped from KIB's website.
+# Replaces the originally-planned Azure Function. Runs identically — calls
+# core.update.run_update() which does the same change-detection + offer-flagging
+# as the AI Trainer Panel button.
+
+on:
+  # Runs every day at 00:00 UTC (03:00 Kuwait time).
+  # Cron format: "minute hour day-of-month month day-of-week"
+  schedule:
+    - cron: '0 0 * * *'
+
+  # Lets you trigger manually from the Actions tab — useful for testing.
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run KIB update
+        env:
+          MONGODB_URL: ${{ secrets.MONGODB_URL }}
+          AZURE_ENDPOINT: ${{ secrets.AZURE_ENDPOINT }}
+          AZURE_KEY: ${{ secrets.AZURE_KEY }}
+          AZURE_API_VERSION: ${{ secrets.AZURE_API_VERSION }}
+          AZURE_EMBEDDING_DEPLOYMENT: ${{ secrets.AZURE_EMBEDDING_DEPLOYMENT }}
+          AZURE_CHAT_DEPLOYMENT: ${{ secrets.AZURE_CHAT_DEPLOYMENT }}
+        run: |
+          python -m core.update
