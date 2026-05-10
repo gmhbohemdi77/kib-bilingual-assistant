@@ -1,0 +1,83 @@
+openapi: 3.0.1
+info:
+  title: KIB Assistant API
+  description: |
+    Bilingual (English/Arabic) RAG API for Kuwait International Bank.
+    Import this file in Copilot Studio as a Custom Connector to give your
+    Teams agent the ability to answer questions from KIB's website.
+  version: "1.0.0"
+servers:
+  - url: https://YOUR-APP.azurewebsites.net
+    description: Replace with the Azure Web App URL where teams_api is deployed
+paths:
+  /health:
+    get:
+      summary: Liveness probe
+      operationId: HealthCheck
+      responses:
+        "200":
+          description: Service is alive
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+  /ask:
+    post:
+      summary: Ask KIB Assistant a question
+      operationId: AskKIB
+      security:
+        - apiKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AskRequest"
+      responses:
+        "200":
+          description: Answer with sources
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AskResponse"
+        "401":
+          description: Invalid or missing API key
+components:
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      in: header
+      name: x-api-key
+  schemas:
+    AskRequest:
+      type: object
+      required: [question]
+      properties:
+        question:
+          type: string
+          description: The user's question, in English or Arabic.
+        top_k:
+          type: integer
+          default: 3
+          minimum: 1
+          maximum: 10
+    AskResponse:
+      type: object
+      properties:
+        answer:
+          type: string
+        language:
+          type: string
+          enum: [ar, en]
+        sources:
+          type: array
+          items:
+            type: object
+            properties:
+              url:
+                type: string
+              score:
+                type: number
