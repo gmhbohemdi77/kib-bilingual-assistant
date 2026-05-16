@@ -30,6 +30,7 @@ if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
 from fastapi import Depends, FastAPI, Header, HTTPException  # noqa: E402
+from pydantic import BaseModel, Field  # noqa: E402
 from fastapi.middleware.cors import CORSMiddleware  # noqa: E402
 
 from core.rag import KIBAssistant  # noqa: E402
